@@ -1,63 +1,145 @@
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { AlertTriangle, Skull, ArrowLeft } from "lucide-react"
 
 function Forbidden() {
     const navigate = useNavigate()
+    const [glitch, setGlitch] = useState(false)
+    const [flash, setFlash] = useState(false)
+
+    useEffect(() => {
+        const glitchInterval = setInterval(() => {
+            setGlitch(true)
+
+            setTimeout(() => {
+                setGlitch(false)
+            }, 200)
+        }, 1500)
+
+        const flashInterval = setInterval(() => {
+            setFlash((prev) => !prev)
+        }, 250)
+
+        return () => {
+            clearInterval(glitchInterval)
+            clearInterval(flashInterval)
+        }
+    }, [])
 
     return (
-        <div className="relative h-screen overflow-hidden bg-black flex items-center justify-center">
+        <div
+            className={`
+        relative overflow-hidden h-screen flex items-center justify-center
+        transition-all duration-100
+        ${flash ? "bg-white" : "bg-black"}
+        ${glitch ? "animate-[shake_0.15s_infinite]" : ""}
+      `}
+        >
 
-            {/* Background Glow */}
-            <div className="absolute w-[500px] h-[500px] bg-red-600/20 blur-3xl rounded-full animate-pulse"></div>
+            {/* Flash overlay */}
+            <div
+                className={`
+          absolute inset-0 pointer-events-none opacity-20
+          ${flash ? "bg-red-500" : "bg-white"}
+          animate-pulse
+        `}
+            />
 
-            {/* Animated Grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,0,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,0,0.08)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            {/* Static Noise */}
+            <div className="absolute inset-0 opacity-20 mix-blend-overlay bg-[url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif')] bg-cover" />
 
-            {/* Floating Warning Icons */}
-            <AlertTriangle className="absolute top-20 left-20 text-red-500 w-14 h-14 animate-bounce opacity-30" />
-            <Skull className="absolute bottom-20 right-20 text-red-700 w-20 h-20 animate-pulse opacity-20" />
+            {/* Random Flicker Bars */}
+            <div className="absolute top-0 left-0 w-full h-2 bg-red-500 animate-pulse opacity-60" />
+            <div className="absolute bottom-20 left-0 w-full h-1 bg-white animate-ping opacity-40" />
 
             {/* Main Card */}
-            <div className="relative z-10 w-[90%] max-w-xl border border-red-500/30 bg-white/5 backdrop-blur-xl rounded-3xl shadow-[0_0_40px_rgba(255,0,0,0.4)] p-10 text-center">
+            <div
+                className={`
+          relative z-10 p-12 rounded-3xl border
+          transition-all duration-75
+          ${flash
+                        ? "bg-black text-white border-red-600"
+                        : "bg-white text-black border-black"
+                    }
+          ${glitch ? "scale-[1.02] rotate-1" : ""}
+          shadow-[0_0_50px_rgba(255,0,0,0.7)]
+        `}
+            >
 
-                {/* Big 403 */}
-                <h1 className="text-[120px] font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-red-400 to-red-900 drop-shadow-[0_0_25px_rgba(255,0,0,0.8)] leading-none animate-pulse">
-                    403
-                </h1>
+                {/* Glitch 403 */}
+                <div className="relative">
 
-                {/* Access Denied */}
-                <h2 className="mt-4 text-3xl font-bold text-white tracking-widest uppercase">
-                    ACCESS DENIED
+                    <h1
+                        className={`
+              text-[130px] font-black tracking-[10px]
+              ${glitch ? "translate-x-2 -translate-y-1 text-red-600" : ""}
+            `}
+                    >
+                        403
+                    </h1>
+
+                    {/* Duplicate glitch layers */}
+                    <h1 className="absolute top-0 left-0 text-[130px] font-black text-cyan-500 opacity-40 -translate-x-2">
+                        403
+                    </h1>
+
+                    <h1 className="absolute top-0 left-0 text-[130px] font-black text-red-500 opacity-30 translate-x-2">
+                        403
+                    </h1>
+
+                </div>
+
+                <h2
+                    className={`
+            text-3xl font-extrabold tracking-[8px] uppercase mt-2
+            ${glitch ? "animate-pulse" : ""}
+          `}
+                >
+                    ACCESS FORBIDDEN
                 </h2>
 
-                {/* Message */}
-                <p className="mt-5 text-gray-400 text-lg leading-relaxed">
-                    You tried to enter a restricted zone.
+                <p className="mt-6 text-lg opacity-80 leading-relaxed">
+                    WARNING :
                     <br />
-                    This incident has been logged.
+                    Unauthorized entity detected.
+                    <br />
+                    Leave immediately.
                 </p>
 
-                {/* Red Divider */}
-                <div className="my-8 h-[1px] bg-gradient-to-r from-transparent via-red-500 to-transparent"></div>
+                {/* Creepy blinking text */}
+                <p className="mt-6 text-red-500 text-sm tracking-[5px] animate-pulse">
+                    SYSTEM BREACH DETECTED
+                </p>
 
                 {/* Button */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 transition-all duration-300 text-white font-semibold shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:scale-105"
+                    className={`
+            mt-8 px-8 py-3 rounded-xl font-bold tracking-widest
+            transition-all duration-150
+            ${flash
+                            ? "bg-red-600 text-white hover:bg-red-700"
+                            : "bg-black text-white hover:bg-gray-900"
+                        }
+            ${glitch ? "translate-x-1" : ""}
+          `}
                 >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Escape
+                    ESCAPE
                 </button>
-
-                {/* Tiny Warning */}
-                <p className="mt-6 text-xs text-red-500/60 tracking-[4px] uppercase">
-                    Unauthorized Access Forbidden
-                </p>
-
             </div>
 
-            {/* Noise Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]"></div>
+            {/* Custom Animations */}
+            <style>
+                {`
+          @keyframes shake {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            20% { transform: translate(-4px, 2px) rotate(-1deg); }
+            40% { transform: translate(4px, -2px) rotate(1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            80% { transform: translate(3px, -1px) rotate(1deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+          }
+        `}
+            </style>
 
         </div>
     )
