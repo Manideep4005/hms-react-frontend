@@ -1,35 +1,66 @@
 import { useNavigate } from "react-router-dom"
+import { AlertTriangle, Skull, ArrowLeft } from "lucide-react"
 
-function Forbidden(){
+function Forbidden() {
+    const navigate = useNavigate()
 
- const navigate = useNavigate()
+    return (
+        <div className="relative h-screen overflow-hidden bg-black flex items-center justify-center">
 
- return(
+            {/* Background Glow */}
+            <div className="absolute w-[500px] h-[500px] bg-red-600/20 blur-3xl rounded-full animate-pulse"></div>
 
-  <div className="h-screen flex items-center justify-center bg-gray-100">
+            {/* Animated Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,0,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,0,0.08)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
 
-   <div className="bg-white p-10 rounded-lg shadow text-center">
+            {/* Floating Warning Icons */}
+            <AlertTriangle className="absolute top-20 left-20 text-red-500 w-14 h-14 animate-bounce opacity-30" />
+            <Skull className="absolute bottom-20 right-20 text-red-700 w-20 h-20 animate-pulse opacity-20" />
 
-    <h1 className="text-4xl font-bold text-red-500 mb-4">
-     403
-    </h1>
+            {/* Main Card */}
+            <div className="relative z-10 w-[90%] max-w-xl border border-red-500/30 bg-white/5 backdrop-blur-xl rounded-3xl shadow-[0_0_40px_rgba(255,0,0,0.4)] p-10 text-center">
 
-    <p className="text-gray-600 mb-6">
-     You do not have permission to access this page.
-    </p>
+                {/* Big 403 */}
+                <h1 className="text-[120px] font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-red-400 to-red-900 drop-shadow-[0_0_25px_rgba(255,0,0,0.8)] leading-none animate-pulse">
+                    403
+                </h1>
 
-    <button
-     onClick={()=>navigate(-1)}
-     className="bg-blue-600 text-white px-5 py-2 rounded"
-    >
-     Go Back
-    </button>
+                {/* Access Denied */}
+                <h2 className="mt-4 text-3xl font-bold text-white tracking-widest uppercase">
+                    ACCESS DENIED
+                </h2>
 
-   </div>
+                {/* Message */}
+                <p className="mt-5 text-gray-400 text-lg leading-relaxed">
+                    You tried to enter a restricted zone.
+                    <br />
+                    This incident has been logged.
+                </p>
 
-  </div>
+                {/* Red Divider */}
+                <div className="my-8 h-[1px] bg-gradient-to-r from-transparent via-red-500 to-transparent"></div>
 
- )
+                {/* Button */}
+                <button
+                    onClick={() => navigate(-1)}
+                    className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 transition-all duration-300 text-white font-semibold shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:scale-105"
+                >
+                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                    Escape
+                </button>
+
+                {/* Tiny Warning */}
+                <p className="mt-6 text-xs text-red-500/60 tracking-[4px] uppercase">
+                    Unauthorized Access Forbidden
+                </p>
+
+            </div>
+
+            {/* Noise Overlay */}
+            <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]"></div>
+
+        </div>
+    )
 }
 
 export default Forbidden
