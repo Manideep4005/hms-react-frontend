@@ -72,6 +72,10 @@ function AppLayout() {
             }
         };
 
+        useEffect(() => {
+            setOpenMenu(false);
+        }, [location.pathname]);
+
         document.addEventListener(
             "mousedown",
             handleClickOutside
@@ -85,6 +89,7 @@ function AppLayout() {
     }, []);
 
     const handleLogout = () => {
+        setOpenMenu(false);
         logout();
         navigate("/");
     };
@@ -102,7 +107,7 @@ function AppLayout() {
     const menuByRole: Record<string, MenuSection[]> = {
         ADMIN: [
             {
-                section: "MAIN",
+                section: "OVERVIEW",
                 items: [
                     {
                         name: "Dashboard",
@@ -112,8 +117,9 @@ function AppLayout() {
                     },
                 ],
             },
+
             {
-                section: "MANAGEMENT",
+                section: "USER MANAGEMENT",
                 items: [
                     {
                         name: "Users",
@@ -125,6 +131,17 @@ function AppLayout() {
                         path: "/admin/register",
                         icon: UserPlus,
                     },
+                    {
+                        name: "Patients",
+                        path: "/admin/patients",
+                        icon: UserCog,
+                    },
+                ],
+            },
+
+            {
+                section: "DOCTOR MANAGEMENT",
+                items: [
                     {
                         name: "Doctors",
                         path: "/admin/doctors",
@@ -141,13 +158,9 @@ function AppLayout() {
                         path: "/admin/doctors/availability",
                         icon: CalendarDays,
                     },
-                    {
-                        name: "Patients",
-                        path: "/admin/patients",
-                        icon: UserCog,
-                    },
                 ],
             },
+
             {
                 section: "APPOINTMENTS",
                 items: [
@@ -162,14 +175,15 @@ function AppLayout() {
                         icon: CalendarPlus,
                     },
                     {
-                        name: "Search",
+                        name: "Search Appointment",
                         path: "/admin/search",
                         icon: Search,
                     },
                 ],
             },
+
             {
-                section: "BILLING",
+                section: "FINANCE",
                 items: [
                     {
                         name: "Billing",
@@ -472,11 +486,10 @@ function AppLayout() {
                         {openMenu && (
                             <div className="absolute right-0 mt-2 w-52 bg-white border rounded-xl shadow-lg z-50 overflow-hidden">
                                 <button
-                                    onClick={() =>
-                                        navigate(
-                                            `/${role.toLowerCase()}/profile`
-                                        )
-                                    }
+                                    onClick={() => {
+                                        setOpenMenu(false);
+                                        navigate(`/${role.toLowerCase()}/profile`);
+                                    }}
                                     className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-sm"
                                 >
                                     <User size={16} />
@@ -484,11 +497,10 @@ function AppLayout() {
                                 </button>
 
                                 <button
-                                    onClick={() =>
-                                        navigate(
-                                            `/${role.toLowerCase()}/change-password`
-                                        )
-                                    }
+                                    onClick={() => {
+                                        setOpenMenu(false);
+                                        navigate(`/${role.toLowerCase()}/change-password`);
+                                    }}
                                     className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-sm"
                                 >
                                     <Key size={16} />

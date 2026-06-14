@@ -15,6 +15,7 @@ type Bill = {
     totalAmount: number;
     status: "PAID" | "UNPAID" | "CANCELLED";
     doctorName: string;
+    patientName: string;
     specialization: string;
     appointmentDate: string;
     items: BillItem[];
@@ -39,6 +40,7 @@ export default function Billing() {
                 setLoading(false);
             }
         };
+
         fetchBills();
     }, []);
 
@@ -52,12 +54,19 @@ export default function Billing() {
     const markAsPaid = async (id: number) => {
         try {
             setPayingId(id);
+
             const res = await payBill(id);
+
             toast.success(res?.message || "Bill paid");
 
             setBills((prev) =>
                 prev.map((b) =>
-                    b.id === id ? { ...b, status: "PAID" } : b
+                    b.id === id
+                        ? {
+                            ...b,
+                            status: "PAID",
+                        }
+                        : b
                 )
             );
         } catch {
@@ -70,7 +79,9 @@ export default function Billing() {
     /* ================= KPI ================= */
 
     const total = bills.length;
+
     const paid = bills.filter((b) => b.status === "PAID").length;
+
     const unpaid = bills.filter((b) => b.status === "UNPAID").length;
 
     const revenue = bills
@@ -91,19 +102,25 @@ export default function Billing() {
 
     if (search) {
         const val = search.toLowerCase();
+
         filtered = filtered.filter(
             (b) =>
-                b.doctorName.toLowerCase().includes(val) ||
-                b.specialization.toLowerCase().includes(val) ||
+                b.doctorName?.toLowerCase().includes(val) ||
+                b.patientName?.toLowerCase().includes(val) ||
+                b.specialization?.toLowerCase().includes(val) ||
                 b.id.toString().includes(val)
         );
     }
 
     const badge = (status: string) => {
-        if (status === "PAID")
+        if (status === "PAID") {
             return "bg-green-50 text-green-600";
-        if (status === "UNPAID")
+        }
+
+        if (status === "UNPAID") {
             return "bg-yellow-50 text-yellow-700";
+        }
+
         return "bg-red-50 text-red-600";
     };
 
@@ -114,6 +131,7 @@ export default function Billing() {
                 <h1 className="text-2xl font-semibold text-gray-900">
                     Billing
                 </h1>
+
                 <p className="text-sm text-gray-500">
                     Manage bills and payments
                 </p>
@@ -128,12 +146,16 @@ export default function Billing() {
 
                 <div className="bg-white border rounded-xl p-4">
                     <p className="text-xs text-gray-500">Paid</p>
-                    <p className="text-xl font-semibold text-green-600">{paid}</p>
+                    <p className="text-xl font-semibold text-green-600">
+                        {paid}
+                    </p>
                 </div>
 
                 <div className="bg-white border rounded-xl p-4">
                     <p className="text-xs text-gray-500">Unpaid</p>
-                    <p className="text-xl font-semibold text-yellow-600">{unpaid}</p>
+                    <p className="text-xl font-semibold text-yellow-600">
+                        {unpaid}
+                    </p>
                 </div>
 
                 <div className="bg-white border rounded-xl p-4">
@@ -157,8 +179,8 @@ export default function Billing() {
                             key={t}
                             onClick={() => setFilter(t)}
                             className={`px-4 py-1.5 text-sm rounded-lg ${filter === t
-                                ? "bg-white shadow text-gray-900"
-                                : "text-gray-500"
+                                    ? "bg-white shadow text-gray-900"
+                                    : "text-gray-500"
                                 }`}
                         >
                             {t}
@@ -171,8 +193,9 @@ export default function Billing() {
                         size={16}
                         className="absolute left-3 top-2.5 text-gray-400"
                     />
+
                     <input
-                        placeholder="Search bills..."
+                        placeholder="Search by patient, doctor, bill id..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="pl-9 pr-3 py-2 border rounded-xl text-sm w-full focus:ring-2 focus:ring-gray-900 outline-none"
@@ -206,8 +229,16 @@ export default function Billing() {
                                     #{bill.id} • ₹{bill.totalAmount}
                                 </p>
 
+                                <p className="text-sm font-medium text-gray-700 mt-1">
+                                    Patient: {bill.patientName}
+                                </p>
+
                                 <p className="text-sm text-gray-500">
-                                    {bill.doctorName} • {bill.specialization}
+                                    Dr. {bill.doctorName}
+                                </p>
+
+                                <p className="text-xs text-gray-500">
+                                    {bill.specialization}
                                 </p>
 
                                 <p className="text-xs text-gray-500 mt-1">
@@ -238,10 +269,14 @@ export default function Billing() {
                                     </button>
                                 )}
 
-                                <button onClick={() => toggleExpand(bill.id)}>
+                                <button
+                                    onClick={() => toggleExpand(bill.id)}
+                                >
                                     <ChevronDown
                                         size={18}
-                                        className={`transition ${expanded[bill.id] ? "rotate-180" : ""
+                                        className={`transition ${expanded[bill.id]
+                                                ? "rotate-180"
+                                                : ""
                                             }`}
                                     />
                                 </button>
@@ -259,6 +294,7 @@ export default function Billing() {
                                         <span>
                                             {item.itemName} × {item.quantity}
                                         </span>
+
                                         <span>₹{item.total}</span>
                                     </div>
                                 ))}
