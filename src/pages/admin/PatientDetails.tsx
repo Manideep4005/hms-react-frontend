@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPatientFullDetails } from "../../services/adminService";
 import { useParams } from "react-router-dom";
-import { User, Mail, Phone, Calendar, Activity, XCircle, DollarSign, ChevronRight } from "lucide-react";
+import { Mail, Phone, Calendar, Activity, XCircle, DollarSign } from "lucide-react";
 
 export default function PatientDetails() {
     const { patientId } = useParams();

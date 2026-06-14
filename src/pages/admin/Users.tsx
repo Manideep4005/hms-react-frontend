@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUsers, deleteUser } from "../../services/adminService";
-import { Search, Trash2, User, Mail, Phone, BadgeCheck } from "lucide-react";
+import { Search, Trash2, Mail, Phone, BadgeCheck } from "lucide-react";
 
 export default function Users() {
   const [users, setUsers] = useState<any[]>([]);

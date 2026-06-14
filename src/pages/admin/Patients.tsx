@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getPatients } from "../../services/adminService";
-import { Search, ArrowRight, User, Mail, Phone } from "lucide-react";
+import { Search, ArrowRight, Mail, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Patients() {

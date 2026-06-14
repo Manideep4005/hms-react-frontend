@@ -3,7 +3,7 @@ import {
   searchPatientById,
   searchPatientByMobile,
 } from "../../services/adminService";
-import { Search, ArrowRight, User, Mail, Phone, Hash, Smartphone } from "lucide-react";
+import { Search, ArrowRight,Mail, Phone, Hash, Smartphone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function SearchPatient() {
