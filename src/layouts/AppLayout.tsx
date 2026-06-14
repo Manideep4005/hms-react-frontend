@@ -72,10 +72,6 @@ function AppLayout() {
             }
         };
 
-        useEffect(() => {
-            setOpenMenu(false);
-        }, [location.pathname]);
-
         document.addEventListener(
             "mousedown",
             handleClickOutside
@@ -88,6 +84,9 @@ function AppLayout() {
             );
     }, []);
 
+    useEffect(() => {
+        setOpenMenu(false);
+    }, [location.pathname]);
     const handleLogout = () => {
         setOpenMenu(false);
         logout();
