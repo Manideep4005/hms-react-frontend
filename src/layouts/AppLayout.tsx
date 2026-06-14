@@ -46,6 +46,8 @@ function AppLayout() {
     });
 
     const [openMenu, setOpenMenu] = useState(false);
+    const [mobileSidebarOpen, setMobileSidebarOpen] =
+        useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
     const [tooltip, setTooltip] = useState({
@@ -54,6 +56,10 @@ function AppLayout() {
         top: 0,
         left: 0,
     });
+
+    useEffect(() => {
+        setMobileSidebarOpen(false);
+    }, [location.pathname]);
 
     useEffect(() => {
         localStorage.setItem(
@@ -87,6 +93,7 @@ function AppLayout() {
     useEffect(() => {
         setOpenMenu(false);
     }, [location.pathname]);
+
     const handleLogout = () => {
         setOpenMenu(false);
         logout();
@@ -291,18 +298,33 @@ function AppLayout() {
         `/${role.toLowerCase()}`;
 
     return (
-        <div className="h-screen flex bg-gray-50 text-gray-800">
+        <div className="h-screen flex bg-gray-50 text-gray-800 overflow-hidden">
+            {mobileSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+                    onClick={() => setMobileSidebarOpen(false)}
+                />
+            )}
             {/* SIDEBAR */}
             <aside
-                className={`bg-white border-r transition-[width] duration-300 ease-in-out flex flex-col overflow-hidden ${collapsed ? "w-[72px]" : "w-64"
-                    }`}
+                className={`
+        fixed lg:relative top-0 left-0 z-50 h-screen
+        bg-white border-r flex flex-col overflow-hidden
+        transition-all duration-300 ease-in-out
+        ${mobileSidebarOpen
+                        ? "translate-x-0"
+                        : "-translate-x-full lg:translate-x-0"}
+        ${collapsed ? "lg:w-[72px]" : "lg:w-64"}
+        w-64
+    `}
             >
                 {/* Logo */}
                 <div className="h-16 flex items-center justify-center border-b shrink-0">
-                    {!collapsed ? (
+                    {!collapsed || mobileSidebarOpen ? (
                         <img
                             src="/MANI_HOSPITAL.png"
                             className="h-8"
+                            alt="Logo"
                         />
                     ) : (
                         <span className="text-blue-600 font-bold text-xl">
@@ -316,9 +338,7 @@ function AppLayout() {
                     {menu.map((group) => (
                         <div key={group.section}>
                             <p
-                                className={`text-xs font-bold text-gray-400 px-3 mb-2 transition-all duration-200 ${collapsed
-                                    ? "opacity-0 h-0 overflow-hidden mb-0"
-                                    : "opacity-100"
+                                className={`text-xs font-bold text-gray-400 px-3 mb-2 transition-all duration-200 ${collapsed && !mobileSidebarOpen ? "opacity-0 h-0 overflow-hidden mb-0" : "opacity-100"
                                     }`}
                             >
                                 {group.section}
@@ -327,12 +347,9 @@ function AppLayout() {
                             <div className="space-y-1">
                                 {group.items.map((m) => {
                                     const Icon = m.icon;
-
                                     const isActive = m.exact
                                         ? location.pathname === m.path
-                                        : location.pathname.startsWith(
-                                            m.path
-                                        );
+                                        : location.pathname.startsWith(m.path);
 
                                     return (
                                         <NavLink
@@ -340,17 +357,12 @@ function AppLayout() {
                                             to={m.path}
                                             end={m.exact}
                                             onMouseEnter={(e) => {
-                                                if (!collapsed) return;
-
-                                                const rect =
-                                                    e.currentTarget.getBoundingClientRect();
-
+                                                if (!collapsed || mobileSidebarOpen) return;
+                                                const rect = e.currentTarget.getBoundingClientRect();
                                                 setTooltip({
                                                     visible: true,
                                                     text: m.name,
-                                                    top:
-                                                        rect.top +
-                                                        rect.height / 2,
+                                                    top: rect.top + rect.height / 2,
                                                     left: rect.right + 10,
                                                 });
                                             }}
@@ -360,23 +372,20 @@ function AppLayout() {
                                                     visible: false,
                                                 }))
                                             }
-                                            className={`flex items-center h-11 rounded-xl text-sm font-medium transition-all duration-200 ${collapsed
-                                                ? "justify-center px-0"
-                                                : "gap-3 px-3"
+                                            className={`flex items-center h-11 rounded-xl text-sm font-medium transition-all duration-200 ${collapsed && !mobileSidebarOpen
+                                                    ? "justify-center px-0"
+                                                    : "gap-3 px-3"
                                                 } ${isActive
                                                     ? "bg-blue-50 text-blue-600"
                                                     : "text-gray-600 hover:bg-gray-100"
                                                 }`}
                                         >
-                                            <Icon
-                                                size={20}
-                                                className="shrink-0"
-                                            />
+                                            <Icon size={20} className="shrink-0" />
 
                                             <span
-                                                className={`whitespace-nowrap transition-all duration-200 ${collapsed
-                                                    ? "opacity-0 w-0 overflow-hidden"
-                                                    : "opacity-100 w-auto"
+                                                className={`whitespace-nowrap transition-all duration-200 ${collapsed && !mobileSidebarOpen
+                                                        ? "opacity-0 w-0 overflow-hidden"
+                                                        : "opacity-100 w-auto"
                                                     }`}
                                             >
                                                 {m.name}
@@ -391,93 +400,79 @@ function AppLayout() {
             </aside>
 
             {/* MAIN */}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
                 {/* HEADER */}
-                <header className="h-16 bg-white border-b flex items-center justify-between px-6">
-                    <div className="flex items-center gap-3 bg-gray-100 px-3 h-10 rounded-lg">
-                        {/* Collapse Button */}
+                <header className="h-16 bg-white border-b flex items-center justify-between px-3 sm:px-6">
+                    <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 px-2 sm:px-3 h-10 rounded-lg">
+                        {/* Menu Buttons */}
                         <button
-                            onClick={() =>
-                                setCollapsed(!collapsed)
-                            }
-                            className="p-1.5 rounded hover:bg-gray-200"
+                            onClick={() => setMobileSidebarOpen(true)}
+                            className="lg:hidden p-1.5 rounded hover:bg-gray-200"
                         >
                             <Menu size={18} />
                         </button>
 
-                        <span className="text-gray-300">
-                            |
-                        </span>
+                        <button
+                            onClick={() => setCollapsed(!collapsed)}
+                            className="hidden lg:block p-1.5 rounded hover:bg-gray-200"
+                        >
+                            <Menu size={18} />
+                        </button>
 
-                        {/* Back */}
+                        {/* Back Button */}
                         {!isDashboardPage && (
                             <>
+                                <span className="text-gray-300 hidden sm:inline">|</span>
                                 <button
                                     onClick={() => navigate(-1)}
                                     className="p-1 rounded hover:bg-gray-200 text-gray-600"
                                 >
                                     <ArrowLeft size={16} />
                                 </button>
-
-                                <span className="text-gray-300">
-                                    |
-                                </span>
                             </>
                         )}
 
-                        {/* Breadcrumb */}
-                        <div className="flex items-center gap-1 text-sm">
-                            {breadcrumbs.map((crumb, index) => {
-                                const isLast =
-                                    index ===
-                                    breadcrumbs.length - 1;
+                        {/* Breadcrumb - Now visible on all screen sizes */}
+                        {breadcrumbs.length > 0 && (
+                            <>
+                                <span className="text-gray-300 hidden xs:inline">|</span>
+                                <div className="flex items-center gap-1 text-sm overflow-x-auto max-w-[calc(100vw-200px)] sm:max-w-none">
+                                    {breadcrumbs.map((crumb, index) => {
+                                        const isLast = index === breadcrumbs.length - 1;
 
-                                return (
-                                    <div
-                                        key={crumb.path}
-                                        className="flex items-center gap-1"
-                                    >
-                                        <button
-                                            onClick={() =>
-                                                !isLast &&
-                                                navigate(crumb.path)
-                                            }
-                                            className={`capitalize ${isLast
-                                                ? "text-gray-800 font-semibold cursor-default"
-                                                : "text-gray-500 hover:text-blue-600"
-                                                }`}
-                                        >
-                                            {crumb.label}
-                                        </button>
-
-                                        {!isLast && (
-                                            <ChevronRight
-                                                size={14}
-                                                className="text-gray-400"
-                                            />
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                        return (
+                                            <div key={crumb.path} className="flex items-center gap-1">
+                                                <button
+                                                    onClick={() => !isLast && navigate(crumb.path)}
+                                                    className={`capitalize whitespace-nowrap ${isLast
+                                                            ? "text-gray-800 font-semibold cursor-default"
+                                                            : "text-gray-500 hover:text-blue-600"
+                                                        }`}
+                                                >
+                                                    {crumb.label}
+                                                </button>
+                                                {!isLast && (
+                                                    <ChevronRight size={14} className="text-gray-400 shrink-0" />
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Profile */}
-                    <div
-                        className="relative"
-                        ref={menuRef}
-                    >
+                    <div className="relative" ref={menuRef}>
                         <button
-                            onClick={() =>
-                                setOpenMenu(!openMenu)
-                            }
-                            className="flex items-center gap-3"
+                            onClick={() => setOpenMenu(!openMenu)}
+                            className="flex items-center gap-2 sm:gap-3"
                         >
-                            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold">
                                 {getInitials(user?.username)}
                             </div>
 
-                            <span className="text-sm font-semibold text-gray-700">
+                            <span className="hidden sm:block text-sm font-semibold text-gray-700">
                                 {user?.username}
                             </span>
                         </button>
@@ -521,7 +516,7 @@ function AppLayout() {
                 </header>
 
                 {/* PAGE CONTENT */}
-                <main className="flex-1 overflow-y-auto p-6">
+                <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
                     <Outlet />
                 </main>
             </div>

@@ -37,51 +37,50 @@ export default function AdminDashboard() {
   const Stat = ({ label, value }: any) => (
     <div>
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-2xl font-semibold text-gray-900 tracking-tight">
+      <p className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
         {value ?? 0}
       </p>
     </div>
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
             Admin Dashboard
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
             Monitor system activity and performance
           </p>
         </div>
-
       </div>
 
       {/* KPI STRIP */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="bg-white border rounded-2xl p-5 hover:shadow-md transition">
-          <Stat label="Users" value={stats.users} />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+        <div className="bg-white border rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:shadow-md transition">
+          <Stat label="Total Users" value={stats.users} />
         </div>
 
-        <div className="bg-white border rounded-2xl p-5 hover:shadow-md transition">
-          <Stat label="Patients" value={stats.patients} />
+        <div className="bg-white border rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:shadow-md transition">
+          <Stat label="Total Patients" value={stats.patients} />
         </div>
 
-        <div className="bg-white border rounded-2xl p-5 hover:shadow-md transition">
+        <div className="bg-white border rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:shadow-md transition">
           <Stat label="Appointments" value={stats.appointments} />
         </div>
 
-        <div className="bg-white border rounded-2xl p-5 hover:shadow-md transition">
-          <Stat label="Today" value={stats.today} />
+        <div className="bg-white border rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:shadow-md transition">
+          <Stat label="Today's Appointments" value={stats.today} />
         </div>
       </div>
 
       {/* MAIN GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* SYSTEM INSIGHT */}
-        <div className="lg:col-span-2 bg-white border rounded-2xl p-6 hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+        <div className="lg:col-span-2 bg-white border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-md transition">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
             System Insight
           </h3>
 
@@ -90,14 +89,14 @@ export default function AdminDashboard() {
             <span className="font-semibold text-gray-900">
               {stats.today}
             </span>{" "}
-            appointments scheduled today across{" "}
+            appointment{stats.today !== 1 ? 's' : ''} scheduled today across{" "}
             <span className="font-semibold text-gray-900">
               {stats.patients}
             </span>{" "}
-            patients.
+            active patient{stats.patients !== 1 ? 's' : ''}.
           </p>
 
-          <div className="mt-4">
+          <div className="mt-4 sm:mt-6">
             <button
               onClick={() => navigate("/admin/appointments")}
               className="text-sm font-medium text-blue-600 hover:underline flex items-center gap-1"
@@ -108,40 +107,38 @@ export default function AdminDashboard() {
         </div>
 
         {/* QUICK ACTIONS */}
-        <div className="bg-white border rounded-2xl p-6 hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-md transition">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
             Quick Actions
           </h3>
 
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <button
               onClick={() => navigate("/admin/users")}
-              className="w-full flex justify-between items-center px-4 py-3 border rounded-xl hover:bg-gray-50 transition"
+              className="w-full flex justify-between items-center px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg sm:rounded-xl hover:bg-gray-50 transition text-sm sm:text-base"
             >
               Manage Users
-              <ArrowRight size={14} />
+              <ArrowRight size={14} className="shrink-0" />
             </button>
 
             <button
               onClick={() => navigate("/admin/patients")}
-              className="w-full flex justify-between items-center px-4 py-3 border rounded-xl hover:bg-gray-50 transition"
+              className="w-full flex justify-between items-center px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg sm:rounded-xl hover:bg-gray-50 transition text-sm sm:text-base"
             >
               Manage Patients
-              <ArrowRight size={14} />
+              <ArrowRight size={14} className="shrink-0" />
             </button>
 
             <button
               onClick={() => navigate("/admin/appointments")}
-              className="w-full flex justify-between items-center px-4 py-3 border rounded-xl hover:bg-gray-50 transition"
+              className="w-full flex justify-between items-center px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg sm:rounded-xl hover:bg-gray-50 transition text-sm sm:text-base"
             >
               View Appointments
-              <ArrowRight size={14} />
+              <ArrowRight size={14} className="shrink-0" />
             </button>
           </div>
         </div>
       </div>
-
-
     </div>
   );
 }

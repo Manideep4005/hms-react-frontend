@@ -32,6 +32,7 @@ export default function RegisterUser() {
 
   const validate = () => {
     if (!form.firstName.trim()) return "First name is required";
+    if (!form.lastName.trim()) return "Last name is required";
     if (!form.email.includes("@")) return "Enter a valid email address";
     if (form.mobileNumber.length !== 10)
       return "Mobile number must be 10 digits";
@@ -61,19 +62,19 @@ export default function RegisterUser() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 md:px-5 py-6">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-5 py-4 sm:py-6">
       {/* HEADER */}
-      <div className="mb-5">
-        <h1 className="text-2xl font-bold text-gray-900">Create User</h1>
-        <p className="text-sm text-gray-500 mt-1">
+      <div className="mb-4 sm:mb-5">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Create User</h1>
+        <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">
           Add a new system user with access role and credentials.
         </p>
       </div>
 
       {/* CARD */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 md:p-6">
+      <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-5 md:p-6">
         {error && (
-          <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">
+          <div className="mb-4 sm:mb-5 rounded-lg sm:rounded-xl border border-red-200 bg-red-50 px-3 sm:px-4 py-2 text-xs sm:text-sm text-red-600">
             {error}
           </div>
         )}
@@ -83,7 +84,7 @@ export default function RegisterUser() {
           title="Basic Information"
           subtitle="Personal and contact details"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <Input
               label="First Name"
               required
@@ -95,6 +96,7 @@ export default function RegisterUser() {
 
             <Input
               label="Last Name"
+              required
               icon={<User size={16} />}
               value={form.lastName}
               onChange={(v: string) => updateField("lastName", v)}
@@ -114,10 +116,13 @@ export default function RegisterUser() {
             <Input
               label="Mobile Number"
               required
+              type="tel"
               icon={<Phone size={16} />}
               value={form.mobileNumber}
               onChange={(v: string) => updateField("mobileNumber", v)}
               placeholder="10 digit mobile number"
+              maxLength={10}
+              pattern="[0-9]{10}"
             />
           </div>
         </Section>
@@ -127,7 +132,7 @@ export default function RegisterUser() {
           title="Access Details"
           subtitle="Login password and user role"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {/* PASSWORD */}
             <PasswordInput
               label="Password"
@@ -154,11 +159,11 @@ export default function RegisterUser() {
         </Section>
 
         {/* ACTION */}
-        <div className="mt-6">
+        <div className="mt-5 sm:mt-6">
           <button
             onClick={submit}
             disabled={loading}
-            className="w-full h-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-sm transition disabled:opacity-60 flex items-center justify-center gap-2"
+            className="w-full h-10 sm:h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-sm transition disabled:opacity-60 flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             {loading ? (
               <>
@@ -186,9 +191,9 @@ function Section({
   children: any;
 }) {
   return (
-    <div className="mb-6">
-      <div className="mb-3">
-        <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+    <div className="mb-5 sm:mb-6 last:mb-0">
+      <div className="mb-2 sm:mb-3">
+        <h2 className="text-sm sm:text-base font-semibold text-gray-900">{title}</h2>
         <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>
       </div>
       {children}
@@ -205,10 +210,12 @@ function Input({
   placeholder,
   required,
   type = "text",
+  maxLength,
+  pattern,
 }: any) {
   return (
     <div>
-      <label className="text-sm font-medium text-gray-700 mb-1 block">
+      <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1 block">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
@@ -223,7 +230,10 @@ function Input({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full h-10 pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition"
+          maxLength={maxLength}
+          pattern={pattern}
+          inputMode={type === "tel" ? "numeric" : "text"}
+          className="w-full h-10 sm:h-11 pl-10 pr-3 rounded-lg sm:rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
         />
       </div>
     </div>
@@ -241,7 +251,7 @@ function PasswordInput({
 }: any) {
   return (
     <div>
-      <label className="text-sm font-medium text-gray-700 mb-1 block">
+      <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1 block">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
@@ -256,7 +266,7 @@ function PasswordInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Enter password"
-          className="w-full h-10 pl-10 pr-10 rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition"
+          className="w-full h-10 sm:h-11 pl-10 pr-10 rounded-lg sm:rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
         />
 
         <button
@@ -282,20 +292,20 @@ function SelectInput({
 }: any) {
   return (
     <div>
-      <label className="text-sm font-medium text-gray-700 mb-1 block">
+      <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1 block">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
 
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none">
           {icon}
         </div>
 
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full h-10 pl-10 pr-3 rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition appearance-none"
+          className="w-full h-10 sm:h-11 pl-10 pr-8 rounded-lg sm:rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none cursor-pointer"
         >
           {options.map((item: any) => (
             <option key={item.value} value={item.value}>
@@ -303,6 +313,13 @@ function SelectInput({
             </option>
           ))}
         </select>
+
+        {/* Custom dropdown arrow */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
       </div>
     </div>
   );
