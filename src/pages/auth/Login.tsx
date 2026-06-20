@@ -50,11 +50,41 @@ function Login() {
       const res = await loginUser(email, password);
 
       if (res.success) {
+
         login(res);
 
-        if (res.role === "PATIENT") navigate("/patient/dashboard");
-        else if (res.role === "ADMIN") navigate("/admin/dashboard");
-        else if (res.role === "DOCTOR") navigate("/doctor/dashboard");
+        if (res.forcePasswordChange) {
+
+          if (res.role === "PATIENT")
+            navigate("/patient/change-password", {
+              state: { forceChange: true }
+            });
+
+          else if (res.role === "ADMIN")
+            navigate("/admin/change-password", {
+              state: { forceChange: true }
+            });
+
+          else if (res.role === "DOCTOR")
+            navigate("/doctor/change-password", {
+              state: { forceChange: true }
+            });
+
+          return;
+          return;
+        }
+
+        if (res.role === "PATIENT") {
+          navigate("/patient/dashboard");
+        }
+
+        else if (res.role === "ADMIN") {
+          navigate("/admin/dashboard");
+        }
+
+        else if (res.role === "DOCTOR") {
+          navigate("/doctor/dashboard");
+        }
       }
     } catch (error: any) {
       setErrorMessage(

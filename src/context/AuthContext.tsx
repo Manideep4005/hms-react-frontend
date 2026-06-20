@@ -1,10 +1,11 @@
-import { createContext, useContext, useState,type ReactNode } from "react"
+import { createContext, useContext, useState, type ReactNode } from "react"
 import { saveSession, clearSession } from "../utils/session"
 
 type AuthUser = {
   username: string
   role: string
   token: string
+  forcePasswordChange: boolean
 }
 
 type AuthContextType = {
@@ -20,14 +21,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const storedToken = sessionStorage.getItem("token")
   const storedRole = sessionStorage.getItem("role")
   const storedUsername = sessionStorage.getItem("username")
+  const storedForcePasswordChange =
+    sessionStorage.getItem("forcePasswordChange");
 
   const [user, setUser] = useState<AuthUser | null>(
     storedToken
       ? {
-          token: storedToken,
-          role: storedRole || "",
-          username: storedUsername || ""
-        }
+        token: storedToken,
+        role: storedRole || "",
+        username: storedUsername || "",
+        forcePasswordChange:
+          storedForcePasswordChange === "true"
+      }
       : null
   )
 
@@ -38,7 +43,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser({
       token: data.token,
       role: data.role,
-      username: data.username
+      username: data.username,
+      forcePasswordChange:
+        data.forcePasswordChange
     })
   }
 

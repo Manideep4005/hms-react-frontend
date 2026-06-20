@@ -10,6 +10,7 @@ import {
   Stethoscope,
   Briefcase,
   Clock3,
+  DollarSign,
 } from "lucide-react";
 
 export default function RegisterDoctor() {
@@ -24,6 +25,7 @@ export default function RegisterDoctor() {
     specialization: "",
     yearsOfExperience: "",
     pastExperience: "",
+    consultationFee: "",
   };
 
   const [form, setForm] = useState<any>(initialState);
@@ -165,6 +167,14 @@ export default function RegisterDoctor() {
               value={form.pastExperience}
               onChange={(v: string) => updateField("pastExperience", v)}
               placeholder="Apollo / Yashoda / Care"
+            />
+            <Input
+              label="Consultation Fee"
+              icon={<DollarSign size={16} />}
+              value={form.consultationFee}
+              onChange={(v: string) => updateField("consultationFee", v)}
+              placeholder="500"
+              type="number"
             />
           </div>
         </Section>

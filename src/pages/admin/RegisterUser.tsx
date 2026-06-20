@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { registerUser } from "../../services/adminService";
 import {
-  Eye,
-  EyeOff,
   Loader2,
   User,
   Mail,
   Phone,
-  Lock,
   Shield,
 } from "lucide-react";
 
@@ -17,14 +14,12 @@ export default function RegisterUser() {
     lastName: "",
     email: "",
     mobileNumber: "",
-    password: "",
     role: "PATIENT",
   };
 
   const [form, setForm] = useState<any>(initialState);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   const updateField = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
@@ -36,8 +31,6 @@ export default function RegisterUser() {
     if (!form.email.includes("@")) return "Enter a valid email address";
     if (form.mobileNumber.length !== 10)
       return "Mobile number must be 10 digits";
-    if (form.password.length < 6)
-      return "Password must be at least 6 characters";
     return null;
   };
 
@@ -127,23 +120,12 @@ export default function RegisterUser() {
           </div>
         </Section>
 
-        {/* ACCESS DETAILS */}
         <Section
           title="Access Details"
-          subtitle="Login password and user role"
+          subtitle="Assign user role"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {/* PASSWORD */}
-            <PasswordInput
-              label="Password"
-              required
-              value={form.password}
-              showPassword={showPassword}
-              onToggle={() => setShowPassword(!showPassword)}
-              onChange={(v: string) => updateField("password", v)}
-            />
 
-            {/* ROLE */}
             <SelectInput
               label="Role"
               required
@@ -153,8 +135,18 @@ export default function RegisterUser() {
               options={[
                 { label: "Patient", value: "PATIENT" },
                 { label: "Receptionist", value: "RECEPTIONIST" },
+                { label: "Pharmacist", value: "PHARMACIST" },
               ]}
             />
+
+          </div>
+
+          <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+            <p className="text-sm text-blue-700">
+              A temporary password will be generated automatically and
+              sent to the user's email address. The user will be required
+              to change their password during first login.
+            </p>
           </div>
         </Section>
 
@@ -240,46 +232,7 @@ function Input({
   );
 }
 
-/* ---------- PASSWORD INPUT ---------- */
-function PasswordInput({
-  label,
-  value,
-  onChange,
-  showPassword,
-  onToggle,
-  required,
-}: any) {
-  return (
-    <div>
-      <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1 block">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
 
-      <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-          <Lock size={16} />
-        </div>
-
-        <input
-          type={showPassword ? "text" : "password"}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Enter password"
-          className="w-full h-10 sm:h-11 pl-10 pr-10 rounded-lg sm:rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-        />
-
-        <button
-          type="button"
-          onClick={onToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-        >
-          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 /* ---------- SELECT ---------- */
 function SelectInput({

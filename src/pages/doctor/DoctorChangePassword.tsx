@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { changeDoctorPassword } from "../../services/doctorService";
 import { Lock, Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 function ChangePassword() {
   const [form, setForm] = useState({
@@ -14,16 +16,43 @@ function ChangePassword() {
   const [success, setSuccess] = useState("");
   const [show, setShow] = useState(false);
 
+
+  const navigate = useNavigate();
+
+  const {
+    user,
+    logout
+  } = useAuth();
+
+  const forceChange =
+    user?.forcePasswordChange ?? false;
+
   const validate = () => {
-    if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
+
+    if (
+      !form.newPassword ||
+      !form.confirmPassword
+    ) {
       return "All fields are required";
     }
 
-    if (form.newPassword.length < 6) {
+    if (
+      !forceChange &&
+      !form.oldPassword
+    ) {
+      return "Current password is required";
+    }
+
+    if (
+      form.newPassword.length < 6
+    ) {
       return "Password must be at least 6 characters";
     }
 
-    if (form.newPassword !== form.confirmPassword) {
+    if (
+      form.newPassword !==
+      form.confirmPassword
+    ) {
       return "Passwords do not match";
     }
 
@@ -45,11 +74,29 @@ function ChangePassword() {
 
     try {
       await changeDoctorPassword({
-        oldPassword: form.oldPassword,
+        oldPassword: forceChange
+          ? null
+          : form.oldPassword,
         newPassword: form.newPassword,
       });
 
-      setSuccess("Password updated successfully");
+      if (forceChange) {
+
+        alert(
+          "Password changed successfully. Please login again."
+        );
+
+        logout();
+
+        navigate("/");
+
+        return;
+      }
+
+      setSuccess(
+        "Password updated successfully"
+      );
+
       setForm({
         oldPassword: "",
         newPassword: "",
@@ -87,23 +134,24 @@ function ChangePassword() {
           {/* FORM */}
           <form onSubmit={submit} className="p-6 space-y-5">
             {/* OLD PASSWORD */}
-            <div>
-              <label className="text-sm font-medium text-gray-600 mb-1 block">
-                Current Password
-              </label>
-              <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500">
-                <Lock size={16} className="text-gray-400 mr-2" />
-                <input
-                  type={show ? "text" : "password"}
-                  className="w-full outline-none text-sm"
-                  value={form.oldPassword}
-                  onChange={(e) =>
-                    setForm({ ...form, oldPassword: e.target.value })
-                  }
-                  placeholder="Enter current password"
-                />
-              </div>
-            </div>
+            {!forceChange && (
+              < div >
+                <label className="text-sm font-medium text-gray-600 mb-1 block">
+                  Current Password
+                </label>
+                <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                  <Lock size={16} className="text-gray-400 mr-2" />
+                  <input
+                    type={show ? "text" : "password"}
+                    className="w-full outline-none text-sm"
+                    value={form.oldPassword}
+                    onChange={(e) =>
+                      setForm({ ...form, oldPassword: e.target.value })
+                    }
+                    placeholder="Enter current password"
+                  />
+                </div>
+              </div>)}
 
             {/* NEW PASSWORD */}
             <div>
@@ -193,8 +241,8 @@ function ChangePassword() {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { changeAdminPassword } from "../../services/adminService";
 import { Lock, Eye, EyeOff, RefreshCw, Shield, CheckCircle, AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ChangePassword() {
   const [form, setForm] = useState({
@@ -8,6 +10,16 @@ export default function ChangePassword() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const navigate = useNavigate();
+
+  const {
+    user,
+    logout
+  } = useAuth();
+
+  const forceChange =
+    user?.forcePasswordChange ?? false;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,19 +40,39 @@ export default function ChangePassword() {
   };
 
   const validate = () => {
-    if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
+
+    if (
+      !form.newPassword ||
+      !form.confirmPassword
+    ) {
       return "All fields are required";
     }
 
-    if (form.newPassword.length < 6) {
+    if (
+      !forceChange &&
+      !form.oldPassword
+    ) {
+      return "Current password is required";
+    }
+
+    if (
+      form.newPassword.length < 6
+    ) {
       return "Password must be at least 6 characters";
     }
 
-    if (form.newPassword !== form.confirmPassword) {
+    if (
+      form.newPassword !==
+      form.confirmPassword
+    ) {
       return "Passwords do not match";
     }
 
-    if (form.oldPassword === form.newPassword) {
+    if (
+      !forceChange &&
+      form.oldPassword ===
+      form.newPassword
+    ) {
       return "New password must be different from current password";
     }
 
@@ -83,11 +115,29 @@ export default function ChangePassword() {
 
     try {
       await changeAdminPassword({
-        oldPassword: form.oldPassword,
+        oldPassword: forceChange
+          ? null
+          : form.oldPassword,
         newPassword: form.newPassword,
       });
 
-      setSuccess("Password updated successfully");
+      if (forceChange) {
+
+        alert(
+          "Password changed successfully. Please login again."
+        );
+
+        logout();
+
+        navigate("/");
+
+        return;
+      }
+
+      setSuccess(
+        "Password updated successfully"
+      );
+
       resetForm();
     } catch (e: any) {
       setError(
@@ -125,30 +175,31 @@ export default function ChangePassword() {
         {/* FORM */}
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
           {/* OLD PASSWORD */}
-          <div>
-            <label className="text-xs sm:text-sm font-medium text-gray-600 mb-1 block">
-              Current Password
-            </label>
-            <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 transition">
-              <Lock size={16} className="text-gray-400 mr-2 shrink-0" />
-              <input
-                type={showOldPassword ? "text" : "password"}
-                className="w-full outline-none text-sm bg-transparent"
-                value={form.oldPassword}
-                onChange={(e) =>
-                  setForm({ ...form, oldPassword: e.target.value })
-                }
-                placeholder="Enter current password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowOldPassword(!showOldPassword)}
-                className="ml-2 p-1 text-gray-500 hover:text-gray-700 rounded"
-              >
-                {showOldPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
+          {!forceChange && (
+            <div>
+              <label className="text-xs sm:text-sm font-medium text-gray-600 mb-1 block">
+                Current Password
+              </label>
+              <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 transition">
+                <Lock size={16} className="text-gray-400 mr-2 shrink-0" />
+                <input
+                  type={showOldPassword ? "text" : "password"}
+                  className="w-full outline-none text-sm bg-transparent"
+                  value={form.oldPassword}
+                  onChange={(e) =>
+                    setForm({ ...form, oldPassword: e.target.value })
+                  }
+                  placeholder="Enter current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowOldPassword(!showOldPassword)}
+                  className="ml-2 p-1 text-gray-500 hover:text-gray-700 rounded"
+                >
+                  {showOldPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>)}
 
           {/* NEW PASSWORD */}
           <div>
