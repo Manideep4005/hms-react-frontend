@@ -1,148 +1,89 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { ShieldAlert, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-function Forbidden() {
-    const navigate = useNavigate()
-    const [glitch, setGlitch] = useState(false)
-    const [flash, setFlash] = useState(false)
-
-    useEffect(() => {
-        const glitchInterval = setInterval(() => {
-            setGlitch(true)
-
-            setTimeout(() => {
-                setGlitch(false)
-            }, 200)
-        }, 1500)
-
-        const flashInterval = setInterval(() => {
-            setFlash((prev) => !prev)
-        }, 250)
-
-        return () => {
-            clearInterval(glitchInterval)
-            clearInterval(flashInterval)
-        }
-    }, [])
+export default function Forbidden() {
+    const navigate = useNavigate();
 
     return (
-        <div
-            className={`
-        relative overflow-hidden h-screen flex items-center justify-center
-        transition-all duration-100
-        ${flash ? "bg-white" : "bg-black"}
-        ${glitch ? "animate-[shake_0.15s_infinite]" : ""}
-      `}
-        >
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#030712]">
 
-            {/* Flash overlay */}
-            <div
-                className={`
-          absolute inset-0 pointer-events-none opacity-20
-          ${flash ? "bg-red-500" : "bg-white"}
-          animate-pulse
-        `}
-            />
+            {/* Aurora Background */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-indigo-500/20 blur-[140px]" />
 
-            {/* Static Noise */}
-            <div className="absolute inset-0 opacity-20 mix-blend-overlay bg-[url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif')] bg-cover" />
+                <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-[150px]" />
 
-            {/* Random Flicker Bars */}
-            <div className="absolute top-0 left-0 w-full h-2 bg-red-500 animate-pulse opacity-60" />
-            <div className="absolute bottom-20 left-0 w-full h-1 bg-white animate-ping opacity-40" />
+                <div className="absolute left-0 top-1/2 h-[350px] w-[350px] rounded-full bg-violet-500/15 blur-[130px]" />
 
-            {/* Main Card */}
-            <div
-                className={`
-          relative z-10 p-12 rounded-3xl border
-          transition-all duration-75
-          ${flash
-                        ? "bg-black text-white border-red-600"
-                        : "bg-white text-black border-black"
-                    }
-          ${glitch ? "scale-[1.02] rotate-1" : ""}
-          shadow-[0_0_50px_rgba(255,0,0,0.7)]
-        `}
-            >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent,rgba(0,0,0,0.75))]" />
+            </div>
 
-                {/* Glitch 403 */}
-                <div className="relative">
+            {/* Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.03)_1px,transparent_1px)] bg-[size:70px_70px]" />
 
-                    <h1
-                        className={`
-              text-[130px] font-black tracking-[10px]
-              ${glitch ? "translate-x-2 -translate-y-1 text-red-600" : ""}
-            `}
-                    >
-                        403
-                    </h1>
+            {/* Card */}
+            <div className="relative z-10 w-full max-w-xl rounded-3xl border border-white/10 bg-white/5 p-10 shadow-[0_0_60px_rgba(59,130,246,0.15)] backdrop-blur-2xl">
 
-                    {/* Duplicate glitch layers */}
-                    <h1 className="absolute top-0 left-0 text-[130px] font-black text-cyan-500 opacity-40 -translate-x-2">
-                        403
-                    </h1>
+                {/* Icon */}
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-red-500 to-orange-500 shadow-xl">
 
-                    <h1 className="absolute top-0 left-0 text-[130px] font-black text-red-500 opacity-30 translate-x-2">
-                        403
-                    </h1>
+                    <ShieldAlert className="h-10 w-10 text-white" />
 
                 </div>
 
-                <h2
-                    className={`
-            text-3xl font-extrabold tracking-[8px] uppercase mt-2
-            ${glitch ? "animate-pulse" : ""}
-          `}
-                >
-                    ACCESS FORBIDDEN
-                </h2>
+                {/* Badge */}
+                <div className="mt-8 flex justify-center">
 
-                <p className="mt-6 text-lg opacity-80 leading-relaxed">
-                    WARNING :
-                    <br />
-                    Unauthorized entity detected.
-                    <br />
-                    Leave immediately.
+                    <span className="rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-red-400">
+                        HTTP 403
+                    </span>
+
+                </div>
+
+                {/* Heading */}
+                <h1 className="mt-8 text-center text-5xl font-bold tracking-tight text-white">
+                    Access Denied
+                </h1>
+
+                <p className="mx-auto mt-5 max-w-md text-center text-lg leading-8 text-slate-400">
+                    You don't have permission to access this page.
+                    If you believe this is a mistake, please contact your administrator.
                 </p>
 
-                {/* Creepy blinking text */}
-                <p className="mt-6 text-red-500 text-sm tracking-[5px] animate-pulse">
-                    SYSTEM BREACH DETECTED
-                </p>
+                {/* Divider */}
+                <div className="my-10 h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-                {/* Button */}
-                <button
-                    onClick={() => navigate(-1)}
-                    className={`
-            mt-8 px-8 py-3 rounded-xl font-bold tracking-widest
-            transition-all duration-150
-            ${flash
-                            ? "bg-red-600 text-white hover:bg-red-700"
-                            : "bg-black text-white hover:bg-gray-900"
-                        }
-            ${glitch ? "translate-x-1" : ""}
-          `}
-                >
-                    ESCAPE
-                </button>
+                {/* Actions */}
+                <div className="flex flex-col gap-4 sm:flex-row">
+
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="group flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 px-5 py-3 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/15"
+                    >
+                        <ArrowLeft
+                            size={18}
+                            className="transition-transform group-hover:-translate-x-1"
+                        />
+                        Go Back
+                    </button>
+
+
+                </div>
+
+                {/* Footer */}
+                <div className="mt-10 border-t border-white/10 pt-6 text-center text-sm text-slate-500">
+                    Error Code: <span className="font-semibold text-slate-300">403 Forbidden</span>
+                </div>
+
             </div>
 
-            {/* Custom Animations */}
-            <style>
-                {`
-          @keyframes shake {
-            0% { transform: translate(0px, 0px) rotate(0deg); }
-            20% { transform: translate(-4px, 2px) rotate(-1deg); }
-            40% { transform: translate(4px, -2px) rotate(1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            80% { transform: translate(3px, -1px) rotate(1deg); }
-            100% { transform: translate(0px, 0px) rotate(0deg); }
-          }
-        `}
-            </style>
+            {/* Floating Blurs */}
+            <div className="absolute left-16 top-16 h-3 w-3 animate-pulse rounded-full bg-cyan-400" />
+
+            <div className="absolute bottom-20 right-20 h-4 w-4 animate-bounce rounded-full bg-violet-400" />
+
+            <div className="absolute top-1/3 right-1/4 h-2 w-2 animate-ping rounded-full bg-blue-400" />
 
         </div>
-    )
+    );
 }
-
-export default Forbidden

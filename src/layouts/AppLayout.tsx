@@ -298,10 +298,10 @@ function AppLayout() {
         `/${role.toLowerCase()}`;
 
     return (
-        <div className="h-screen flex bg-gray-50 text-gray-800 overflow-hidden">
+        <div className="h-screen flex bg-slate-50 text-slate-800 overflow-hidden">
             {mobileSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+                    className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-40 lg:hidden"
                     onClick={() => setMobileSidebarOpen(false)}
                 />
             )}
@@ -309,17 +309,17 @@ function AppLayout() {
             <aside
                 className={`
         fixed lg:relative top-0 left-0 z-50 h-screen
-        bg-white border-r flex flex-col overflow-hidden
+        bg-white border-r border-slate-200 flex flex-col overflow-hidden
         transition-all duration-300 ease-in-out
         ${mobileSidebarOpen
-                        ? "translate-x-0"
+                        ? "translate-x-0 shadow-2xl"
                         : "-translate-x-full lg:translate-x-0"}
-        ${collapsed ? "lg:w-[72px]" : "lg:w-64"}
+        ${collapsed ? "lg:w-[76px]" : "lg:w-64"}
         w-64
     `}
             >
                 {/* Logo */}
-                <div className="h-16 flex items-center justify-center border-b shrink-0">
+                <div className="h-16 flex items-center justify-center border-b border-slate-100 shrink-0">
                     {!collapsed || mobileSidebarOpen ? (
                         <img
                             src="/MANI_HOSPITAL.png"
@@ -327,24 +327,24 @@ function AppLayout() {
                             alt="Logo"
                         />
                     ) : (
-                        <span className="text-blue-600 font-bold text-xl">
+                        <span className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold text-base flex items-center justify-center shadow-sm shadow-blue-600/20">
                             M
                         </span>
                     )}
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-2 py-4 space-y-4 overflow-y-auto">
+                <nav className="flex-1 px-2.5 py-4 space-y-5 overflow-y-auto">
                     {menu.map((group) => (
                         <div key={group.section}>
                             <p
-                                className={`text-xs font-bold text-gray-400 px-3 mb-2 transition-all duration-200 ${collapsed && !mobileSidebarOpen ? "opacity-0 h-0 overflow-hidden mb-0" : "opacity-100"
+                                className={`text-[10px] font-bold tracking-wider text-slate-400 px-3 mb-2 transition-all duration-200 ${collapsed && !mobileSidebarOpen ? "opacity-0 h-0 overflow-hidden mb-0" : "opacity-100"
                                     }`}
                             >
                                 {group.section}
                             </p>
 
-                            <div className="space-y-1">
+                            <div className="space-y-0.5">
                                 {group.items.map((m) => {
                                     const Icon = m.icon;
                                     const isActive = m.exact
@@ -372,20 +372,27 @@ function AppLayout() {
                                                     visible: false,
                                                 }))
                                             }
-                                            className={`flex items-center h-11 rounded-xl text-sm font-medium transition-all duration-200 ${collapsed && !mobileSidebarOpen
-                                                    ? "justify-center px-0"
-                                                    : "gap-3 px-3"
+                                            className={`relative flex items-center h-11 rounded-xl text-sm font-medium transition-all duration-200 ${collapsed && !mobileSidebarOpen
+                                                ? "justify-center px-0"
+                                                : "gap-3 px-3"
                                                 } ${isActive
-                                                    ? "bg-blue-50 text-blue-600"
-                                                    : "text-gray-600 hover:bg-gray-100"
+                                                    ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700"
+                                                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                                                 }`}
                                         >
-                                            <Icon size={20} className="shrink-0" />
+                                            {isActive && (
+                                                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-gradient-to-b from-blue-600 to-indigo-600" />
+                                            )}
+
+                                            <Icon
+                                                size={19}
+                                                className={`shrink-0 ${isActive ? "text-blue-600" : "text-slate-400"}`}
+                                            />
 
                                             <span
                                                 className={`whitespace-nowrap transition-all duration-200 ${collapsed && !mobileSidebarOpen
-                                                        ? "opacity-0 w-0 overflow-hidden"
-                                                        : "opacity-100 w-auto"
+                                                    ? "opacity-0 w-0 overflow-hidden"
+                                                    : "opacity-100 w-auto"
                                                     }`}
                                             >
                                                 {m.name}
@@ -397,35 +404,55 @@ function AppLayout() {
                         </div>
                     ))}
                 </nav>
+
+                {/* Sidebar footer / role badge */}
+                <div
+                    className={`border-t border-slate-100 p-3 shrink-0 transition-all duration-200 ${collapsed && !mobileSidebarOpen ? "flex justify-center" : ""
+                        }`}
+                >
+                    <div
+                        className={`flex items-center gap-2 rounded-xl bg-slate-50 ${collapsed && !mobileSidebarOpen ? "px-0 py-2 justify-center" : "px-3 py-2"
+                            }`}
+                    >
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                        {(!collapsed || mobileSidebarOpen) && (
+                            <span className="text-[11px] font-medium text-slate-500 truncate">
+                                {role?.charAt(0)}
+                                {role?.slice(1).toLowerCase()} access
+                            </span>
+                        )}
+                    </div>
+                </div>
             </aside>
 
             {/* MAIN */}
             <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
                 {/* HEADER */}
-                <header className="h-16 bg-white border-b flex items-center justify-between px-3 sm:px-6">
-                    <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 px-2 sm:px-3 h-10 rounded-lg">
+                {/* HEADER — add relative + a high z so it always sits above page content */}
+                <header className="h-16 bg-white/80 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-3 sm:px-6 shrink-0 relative z-30">
+                    <div className="flex items-center gap-2 sm:gap-3 bg-slate-100/80 px-2 sm:px-3 h-10 rounded-xl">
                         {/* Menu Buttons */}
                         <button
                             onClick={() => setMobileSidebarOpen(true)}
-                            className="lg:hidden p-1.5 rounded hover:bg-gray-200"
+                            className="lg:hidden p-1.5 rounded-lg hover:bg-white hover:shadow-sm transition"
                         >
-                            <Menu size={18} />
+                            <Menu size={18} className="text-slate-600" />
                         </button>
 
                         <button
                             onClick={() => setCollapsed(!collapsed)}
-                            className="hidden lg:block p-1.5 rounded hover:bg-gray-200"
+                            className="hidden lg:block p-1.5 rounded-lg hover:bg-white hover:shadow-sm transition"
                         >
-                            <Menu size={18} />
+                            <Menu size={18} className="text-slate-600" />
                         </button>
 
                         {/* Back Button */}
                         {!isDashboardPage && (
                             <>
-                                <span className="text-gray-300 hidden sm:inline">|</span>
+                                <span className="text-slate-300 hidden sm:inline">|</span>
                                 <button
                                     onClick={() => navigate(-1)}
-                                    className="p-1 rounded hover:bg-gray-200 text-gray-600"
+                                    className="p-1 rounded-lg hover:bg-white hover:shadow-sm text-slate-500 transition"
                                 >
                                     <ArrowLeft size={16} />
                                 </button>
@@ -435,7 +462,7 @@ function AppLayout() {
                         {/* Breadcrumb - Now visible on all screen sizes */}
                         {breadcrumbs.length > 0 && (
                             <>
-                                <span className="text-gray-300 hidden xs:inline">|</span>
+                                <span className="text-slate-300 hidden xs:inline">|</span>
                                 <div className="flex items-center gap-1 text-sm overflow-x-auto max-w-[calc(100vw-200px)] sm:max-w-none">
                                     {breadcrumbs.map((crumb, index) => {
                                         const isLast = index === breadcrumbs.length - 1;
@@ -444,15 +471,15 @@ function AppLayout() {
                                             <div key={crumb.path} className="flex items-center gap-1">
                                                 <button
                                                     onClick={() => !isLast && navigate(crumb.path)}
-                                                    className={`capitalize whitespace-nowrap ${isLast
-                                                            ? "text-gray-800 font-semibold cursor-default"
-                                                            : "text-gray-500 hover:text-blue-600"
+                                                    className={`capitalize whitespace-nowrap transition ${isLast
+                                                        ? "text-slate-900 font-semibold cursor-default"
+                                                        : "text-slate-500 hover:text-blue-600"
                                                         }`}
                                                 >
                                                     {crumb.label}
                                                 </button>
                                                 {!isLast && (
-                                                    <ChevronRight size={14} className="text-gray-400 shrink-0" />
+                                                    <ChevronRight size={14} className="text-slate-400 shrink-0" />
                                                 )}
                                             </div>
                                         );
@@ -466,27 +493,29 @@ function AppLayout() {
                     <div className="relative" ref={menuRef}>
                         <button
                             onClick={() => setOpenMenu(!openMenu)}
-                            className="flex items-center gap-2 sm:gap-3"
+                            className="flex items-center gap-2 sm:gap-3 rounded-xl px-1.5 py-1 hover:bg-slate-50 transition"
                         >
-                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold">
+                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold shadow-sm shadow-blue-600/20">
                                 {getInitials(user?.username)}
                             </div>
 
-                            <span className="hidden sm:block text-sm font-semibold text-gray-700">
+                            <span className="hidden sm:block text-sm font-semibold text-slate-700">
                                 {user?.username}
                             </span>
                         </button>
 
                         {openMenu && (
-                            <div className="absolute right-0 mt-2 w-52 bg-white border rounded-xl shadow-lg z-50 overflow-hidden">
+                            <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-lg shadow-slate-900/5 z-50 overflow-hidden py-1.5">
                                 <button
                                     onClick={() => {
                                         setOpenMenu(false);
                                         navigate(`/${role.toLowerCase()}/profile`);
                                     }}
-                                    className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-sm"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2.5 hover:bg-slate-50 text-sm text-slate-700 transition"
                                 >
-                                    <User size={16} />
+                                    <span className="h-7 w-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                                        <User size={14} className="text-blue-600" />
+                                    </span>
                                     Profile
                                 </button>
 
@@ -495,19 +524,23 @@ function AppLayout() {
                                         setOpenMenu(false);
                                         navigate(`/${role.toLowerCase()}/change-password`);
                                     }}
-                                    className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-sm"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2.5 hover:bg-slate-50 text-sm text-slate-700 transition"
                                 >
-                                    <Key size={16} />
+                                    <span className="h-7 w-7 rounded-lg bg-indigo-50 flex items-center justify-center">
+                                        <Key size={14} className="text-indigo-600" />
+                                    </span>
                                     Change Password
                                 </button>
 
-                                <div className="border-t"></div>
+                                <div className="border-t border-slate-100 my-1"></div>
 
                                 <button
                                     onClick={handleLogout}
-                                    className="flex items-center gap-2 w-full px-4 py-2 text-red-500 hover:bg-gray-100 text-sm"
+                                    className="flex items-center gap-2.5 w-full px-4 py-2.5 text-red-600 hover:bg-red-50 text-sm transition"
                                 >
-                                    <LogOut size={16} />
+                                    <span className="h-7 w-7 rounded-lg bg-red-50 flex items-center justify-center">
+                                        <LogOut size={14} className="text-red-500" />
+                                    </span>
                                     Logout
                                 </button>
                             </div>
@@ -524,7 +557,7 @@ function AppLayout() {
             {/* Tooltip */}
             {tooltip.visible && (
                 <div
-                    className="fixed z-[9999] bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap"
+                    className="fixed z-[9999] bg-slate-900 text-white text-xs font-medium px-2.5 py-1.5 rounded-lg shadow-lg shadow-slate-900/20 whitespace-nowrap"
                     style={{
                         top: tooltip.top,
                         left: tooltip.left,
