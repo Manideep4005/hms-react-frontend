@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { getDoctors, deleteDoctor } from "../../../services/adminService";
+import ModalPortal from "../../../components/ModalPortal";
 
 export default function Doctors() {
   const navigate = useNavigate();
@@ -403,38 +404,40 @@ export default function Doctors() {
 
       {/* Delete Modal - Responsive */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            onClick={closeDeleteModal}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          />
-          <div className="relative bg-white w-full max-w-md rounded-2xl shadow-xl p-5 mx-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Delete Doctor
-            </h3>
-            <p className="text-sm text-gray-600 mb-5">
-              Are you sure you want to delete{" "}
-              <span className="font-medium text-gray-800">
-                {selectedDoctor?.firstName} {selectedDoctor?.lastName}
-              </span>
-              ? This action cannot be undone.
-            </p>
-            <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
-              <button
-                onClick={closeDeleteModal}
-                className="w-full sm:w-auto px-4 py-2 rounded-lg border text-sm hover:bg-gray-50 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={removeDoctor}
-                className="w-full sm:w-auto px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm transition"
-              >
+        <ModalPortal>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+              onClick={closeDeleteModal}
+              className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900/40 backdrop-blur-sm"
+            />
+            <div className="relative bg-white w-full max-w-md rounded-2xl shadow-xl p-5 mx-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
                 Delete Doctor
-              </button>
+              </h3>
+              <p className="text-sm text-gray-600 mb-5">
+                Are you sure you want to delete{" "}
+                <span className="font-medium text-gray-800">
+                  {selectedDoctor?.firstName} {selectedDoctor?.lastName}
+                </span>
+                ? This action cannot be undone.
+              </p>
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+                <button
+                  onClick={closeDeleteModal}
+                  className="w-full sm:w-auto px-4 py-2 rounded-lg border text-sm hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={removeDoctor}
+                  className="w-full sm:w-auto px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm transition"
+                >
+                  Delete Doctor
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
     </div>
   );

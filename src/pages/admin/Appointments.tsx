@@ -187,29 +187,37 @@ export default function Appointments() {
       </div>
 
       {/* DELETE MODAL */}
-      {deleteId && (
+      {/* DELETE MODAL */}
+      {deleteId !== null && (
         <ModalPortal>
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="bg-white w-[400px] rounded-2xl p-6 shadow-xl text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="fixed inset-0 z-[9999] flex min-h-screen w-screen items-center justify-center p-4">
+            {/* BACKDROP */}
+            <div
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setDeleteId(null)}
+            />
+
+            {/* MODAL CONTENT */}
+            <div className="relative z-10 w-full max-w-[400px] rounded-2xl bg-white p-6 text-center shadow-xl">
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">
                 Delete Appointment?
               </h3>
 
-              <p className="text-sm text-gray-500 mb-5">
+              <p className="mb-5 text-sm text-gray-500">
                 This action cannot be undone.
               </p>
 
               <div className="flex justify-center gap-3">
                 <button
                   onClick={() => setDeleteId(null)}
-                  className="px-4 py-2 border rounded-xl hover:bg-gray-100"
+                  className="rounded-xl border px-4 py-2 transition-colors hover:bg-gray-100"
                 >
                   Cancel
                 </button>
 
                 <button
                   onClick={confirmDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700"
+                  className="rounded-xl bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
                 >
                   Delete
                 </button>

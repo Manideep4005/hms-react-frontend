@@ -10,6 +10,7 @@ import {
   X,
   Stethoscope,
 } from "lucide-react";
+import ModalPortal from "../../components/ModalPortal";
 
 export default function Users() {
   const [users, setUsers] = useState<any[]>([]);
@@ -69,7 +70,13 @@ export default function Users() {
   const getUserRoles = (user: any): string[] => {
     return (
       user.roles
-        ?.map((role: any) => role.name?.toUpperCase())
+        ?.map((role: any) => {
+          if (typeof role === "string") {
+            return role.toUpperCase();
+          }
+
+          return role?.name?.toUpperCase();
+        })
         .filter(Boolean) ?? []
     );
   };
@@ -458,59 +465,61 @@ export default function Users() {
 
       {/* DELETE MODAL */}
       {showModal && selectedUser && !isDoctor(selectedUser) && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-          <div
-            className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
-            onClick={closeModal}
-          />
+        <ModalPortal>
+          <div className="fixed top-0 left-0 right-0 bottom-0 z-[9999] flex min-h-screen w-screen items-center justify-center p-4">
+            <div
+              className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900/40 backdrop-blur-sm"
+              onClick={closeModal}
+            />
 
-          <div className="relative bg-white rounded-2xl shadow-xl ring-1 ring-gray-900/5 w-full max-w-[400px] p-5 sm:p-6 animate-fadeIn">
-            {/* MODAL HEADER */}
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
-                <Trash2 size={18} />
+            <div className="relative bg-white rounded-2xl shadow-xl ring-1 ring-gray-900/5 w-full max-w-[400px] p-5 sm:p-6 animate-fadeIn">
+              {/* MODAL HEADER */}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                  <Trash2 size={18} />
+                </div>
+
+                <button
+                  onClick={closeModal}
+                  disabled={deleting}
+                  className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-40"
+                >
+                  <X size={16} />
+                </button>
               </div>
 
-              <button
-                onClick={closeModal}
-                disabled={deleting}
-                className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-40"
-              >
-                <X size={16} />
-              </button>
-            </div>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                Delete user
+              </h3>
 
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-              Delete user
-            </h3>
+              <p className="text-sm text-gray-500 mt-1.5 mb-6 leading-relaxed">
+                <span className="font-medium text-gray-800">
+                  {selectedUser.firstName} {selectedUser.lastName}
+                </span>{" "}
+                will lose access immediately. This can't be undone.
+              </p>
 
-            <p className="text-sm text-gray-500 mt-1.5 mb-6 leading-relaxed">
-              <span className="font-medium text-gray-800">
-                {selectedUser.firstName} {selectedUser.lastName}
-              </span>{" "}
-              will lose access immediately. This can't be undone.
-            </p>
+              {/* ACTIONS */}
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
+                <button
+                  onClick={closeModal}
+                  disabled={deleting}
+                  className="px-4 py-2 rounded-xl ring-1 ring-gray-200 text-gray-600 hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50"
+                >
+                  Cancel
+                </button>
 
-            {/* ACTIONS */}
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
-              <button
-                onClick={closeModal}
-                disabled={deleting}
-                className="px-4 py-2 rounded-xl ring-1 ring-gray-200 text-gray-600 hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors text-sm font-medium disabled:opacity-60 inline-flex items-center justify-center gap-2"
-              >
-                {deleting ? "Deleting..." : "Delete user"}
-              </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors text-sm font-medium disabled:opacity-60 inline-flex items-center justify-center gap-2"
+                >
+                  {deleting ? "Deleting..." : "Delete user"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
     </div>
   );

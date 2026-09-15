@@ -28,9 +28,20 @@ const EMPTY_FORM = {
   slotDuration: 15,
 };
 
+type DoctorAvailability = {
+  id: number;
+  doctorId: number;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+  breakStart: string | null;
+  breakEnd: string | null;
+  slotDuration: number;
+};
+
 export default function DoctorAvailability() {
   const [doctors, setDoctors] = useState<any[]>([]);
-  const [list, setList] = useState<any[]>([]);
+  const [list, setList] = useState<DoctorAvailability[]>([]);
   const [loadingList, setLoadingList] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -75,13 +86,14 @@ export default function DoctorAvailability() {
 
   const startEdit = (a: any) => {
     setEditingId(a.id);
+
     setForm({
-      doctorId: String(a.doctor.id),
+      doctorId: String(a.doctorId),
       dayOfWeek: a.dayOfWeek,
-      startTime: a.startTime,
-      endTime: a.endTime,
-      breakStart: a.breakStart || "",
-      breakEnd: a.breakEnd || "",
+      startTime: a.startTime?.slice(0, 5) || "",
+      endTime: a.endTime?.slice(0, 5) || "",
+      breakStart: a.breakStart?.slice(0, 5) || "",
+      breakEnd: a.breakEnd?.slice(0, 5) || "",
       slotDuration: a.slotDuration,
     });
   };
@@ -91,12 +103,15 @@ export default function DoctorAvailability() {
     setForm((f) => ({ ...EMPTY_FORM, doctorId: f.doctorId }));
   };
 
-  const formatTime = (time: string) => {
-    if (!time) return "";
-    return new Date(`1970-01-01T${time}`).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const formatTime = (time: string | null) => {
+    if (!time) return "-";
+
+    const [hours, minutes] = time.split(":").map(Number);
+
+    const period = hours >= 12 ? "PM" : "AM";
+    const hour12 = hours % 12 || 12;
+
+    return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
   };
 
   const dayLabel = (d: string) =>
@@ -309,8 +324,8 @@ export default function DoctorAvailability() {
                   <div
                     key={a.id}
                     className={`rounded-xl p-4 flex justify-between items-center transition-colors ${isEditing
-                        ? "ring-2 ring-blue-500 bg-blue-50/40"
-                        : "ring-1 ring-gray-100 hover:bg-gray-50"
+                      ? "ring-2 ring-blue-500 bg-blue-50/40"
+                      : "ring-1 ring-gray-100 hover:bg-gray-50"
                       }`}
                   >
                     <div className="min-w-0">
